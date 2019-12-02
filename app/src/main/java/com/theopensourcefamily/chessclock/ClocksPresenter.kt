@@ -19,6 +19,10 @@ class ClocksPresenter @Inject constructor(
   fun bindView(view: ClocksView) {
     this.view = view
 
+    startGame(30000L, 30000L)
+  }
+
+  private fun startGame(blacksTime: Long, whitesTime: Long) {
     disposables.add(
       clock.getClockObservable()
         .withLatestFrom(
@@ -27,7 +31,7 @@ class ClocksPresenter @Inject constructor(
             interaction
           })
         .scan<ClockState>(
-          ClockState.Stopped(30000, 30000),
+          ClockState.Stopped(whitesTime, blacksTime),
           { previousState: ClockState, lastInteraction: ClocksView.Interaction ->
             if (previousState.blacksTime == 0L || previousState.whitesTime == 0L) {
               ClockState.GameOver(previousState.whitesTime, previousState.blacksTime)
@@ -53,6 +57,6 @@ class ClocksPresenter @Inject constructor(
   }
 
   fun unbind() {
-    disposables.dispose()
+    disposables.clear()
   }
 }
