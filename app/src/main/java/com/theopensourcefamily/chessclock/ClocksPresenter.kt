@@ -31,7 +31,7 @@ class ClocksPresenter @Inject constructor(
             interaction
           })
         .scan<ClockState>(
-          ClockState.Stopped(whitesTime, blacksTime),
+          ClockState.Stopped(whitesTime, blacksTime, canReset = false),
           { previousState: ClockState, lastInteraction: ClocksView.Interaction ->
             if (previousState.blacksTime == 0L || previousState.whitesTime == 0L) {
               ClockState.GameOver(previousState.whitesTime, previousState.blacksTime)
@@ -42,7 +42,13 @@ class ClocksPresenter @Inject constructor(
                 ClocksView.Interaction.BlackPressed ->
                   ClockState.WhiteRunning(previousState.whitesTime - 1, previousState.blacksTime)
                 ClocksView.Interaction.StopPressed ->
-                  ClockState.Stopped(previousState.whitesTime, previousState.blacksTime)
+                  ClockState.Stopped(
+                    previousState.whitesTime,
+                    previousState.blacksTime,
+                    canReset = true
+                  )
+                ClocksView.Interaction.ResetPressed ->
+                  ClockState.Stopped(whitesTime, blacksTime, canReset = false)
               }
             }
           })
